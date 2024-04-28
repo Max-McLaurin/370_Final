@@ -6,40 +6,52 @@ import socket
 class WeatherScraper:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = 'https://api.openweathermap.org/data/2.5/weather'
+        self.base_url = 'https://api.openweathermap.org/data/3.0/onecall'
 
-    def fetch_weather_data(self, city_id):
+    def fetch_weather_forecast(self, latitude, longitude):
         params = {
-            'id': city_id,  # City ID for Denver, Colorado
+            'lat': latitude,
+            'lon': longitude,
+            'exclude': 'current,minutely,hourly,alerts',  # Exclude unnecessary parts
             'appid': self.api_key,
-            'units': 'metric'  # or 'imperial' for Fahrenheit
+            'units': 'imperial'  # Using imperial for demonstration (°F)
         }
         response = requests.get(self.base_url, params=params)
         if response.status_code == 200:
-            return response.json()
+            data = response.json()
+            # Extract only the daily forecast's temperature and weather
+            forecast = [
+                {
+                    'date': datetime.fromtimestamp(day['dt']).strftime('%Y-%m-%d'),
+                    'temperature': day['temp'],
+                    'weather': day['weather'][0] if day['weather'] else {}
+                } for day in data['daily']
+            ]
+            return forecast
         else:
             error_message = response.json().get('message', 'Failed to fetch data')
             raise Exception(f"API Error: {error_message} - Status Code: {response.status_code}")
 
-def scrape_weather_data():
+def scrape_weather_forecast():
     api_key = '1ca0f59fe93a61361be975d8d29c21c7'
-    city_id = 5419384  # City ID for Denver, Colorado
+    latitude = 39.7392  # Latitude for Denver, Colorado
+    longitude = -104.9903  # Longitude for Denver, Colorado
     scraper = WeatherScraper(api_key)
-    weather_data = scraper.fetch_weather_data(city_id)
-    with open('weather_data.json', 'w') as f:
-        json.dump(weather_data, f, indent=4)
-    return weather_data
+    forecast_data = scraper.fetch_weather_forecast(latitude, longitude)
+    with open('forecast_data.json', 'w') as f:
+        json.dump(forecast_data, f, indent=4)
+    return forecast_data
 
 def connect_to_server(server_ip, port=65433):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((server_ip, port))
             print("Connected to server.")
-            weather_data = scrape_weather_data()
-            serialized_data = json.dumps(weather_data).encode('utf-8')
+            forecast_data = scrape_weather_forecast()
+            serialized_data = json.dumps(forecast_data).encode('utf-8')
             sock.sendall(serialized_data)
-            print("Weather data sent to server.")
-            response = sock.recv(1024)
+            print("Weather forecast data sent to server.")
+            response = sock.recv(8192)
             print("Received response:", response.decode())
     except socket.error as e:
         print(f"Could not connect to server {server_ip} on port {port}: {e}")

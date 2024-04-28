@@ -7,11 +7,11 @@ def receive_full_data(sock):
     try:
         sock.settimeout(5.0)
         while True:
-            part = sock.recv(4096)
+            part = sock.recv(8192)
             if not part:
                 break
             data += part
-            if len(part) < 4096:
+            if len(part) < 8192:
                 break
     except socket.timeout:
         print("Timeout reached while waiting for data.")
