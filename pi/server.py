@@ -2,6 +2,19 @@ import socket
 import select
 from collections import deque
 import json
+import csv
+
+
+def json_to_csv(data, filename='data.csv'):
+   # Assume data is a list of dictionaries under 'quotes'
+   keys = data[0]['quote']['USD'].keys()  # Get headers from the first entry
+   with open(filename, 'w', newline='') as file:
+       writer = csv.DictWriter(file, fieldnames=['timestamp'] + list(keys))
+       writer.writeheader()
+       for entry in data:
+           row = {'timestamp': entry['timestamp']}
+           row.update(entry['quote']['USD'])
+           writer.writerow(row)
 
 
 def start_server(host='0.0.0.0', port=65433):
@@ -28,47 +41,35 @@ def start_server(host='0.0.0.0', port=65433):
                sockets_list.append(client_socket)
                client_address_map[client_socket] = client_address
                print(f"Accepted new connection from {client_address}")
-              
+
+
                if not clients["scraper"]:
                    clients["scraper"] = client_socket
                    print(f"Scraper client connected: {client_address}")
                elif not clients["processor"]:
                    clients["processor"] = client_socket
                    print(f"Processor client connected: {client_address}")
+                   # Send any queued data
+                   while data_queue:
+                       send_file(clients["processor"], data_queue.popleft())
 
 
            else:
-               message = notified_socket.recv(4096)  # Larger buffer size
-               print(message, "Data recieved from scraper.")
+               message = notified_socket.recv(4096)
                if message:
                    if notified_socket == clients["scraper"]:
-                       # Save or forward the data
+                       data = json.loads(message.decode('utf-8'))
+                       # Convert and save to CSV
+                       json_to_csv(data['quotes'])
+                       data_queue.append('data.csv')
                        if clients["processor"]:
-
-
-
-
-
-
-
-
-                           clients["processor"].sendall(message)
-                       else:
-                           data_queue.append(message)
-                           # Convert bytes to string and then to JSON
-                           data = json.loads(message.decode('utf-8'))
-                           # Save the JSON data to a file
-                           with open('received_data.json', 'w') as json_file:
-                               json.dump(data, json_file, indent=4)
-                               print("Data saved to received_data.json")
+                           send_file(clients["processor"], 'data.csv')
                else:
-                   print(f"Closed connection from {client_address_map[notified_socket]}")
                    sockets_list.remove(notified_socket)
                    del client_address_map[notified_socket]
-                   if notified_socket == clients["scraper"]:
-                       clients["scraper"] = None
-                   elif notified_socket == clients["processor"]:
-                       clients["processor"] = None
+                   if notified_socket in [clients["scraper"], clients["processor"]]:
+                       clients["scraper"] = None if notified_socket == clients["scraper"] else clients["scraper"]
+                       clients["processor"] = None if notified_socket == clients["processor"] else clients["processor"]
                    notified_socket.close()
 
 
@@ -76,6 +77,12 @@ def start_server(host='0.0.0.0', port=65433):
            sockets_list.remove(notified_socket)
            del client_address_map[notified_socket]
            notified_socket.close()
+
+
+def send_file(client_socket, filename):
+   with open(filename, 'rb') as file:
+       client_socket.sendfile(file)
+   print(f"Sent {filename} to processor.")
 
 
 if __name__ == "__main__":
