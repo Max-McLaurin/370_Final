@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import datetime
 import socket
+import zlib
 
 class WeatherScraper:
     def __init__(self, api_key):
@@ -12,14 +13,13 @@ class WeatherScraper:
         params = {
             'lat': latitude,
             'lon': longitude,
-            'exclude': 'current,minutely,hourly,alerts',  # Exclude unnecessary parts
+            'exclude': 'current,minutely,hourly,alerts',
             'appid': self.api_key,
-            'units': 'imperial'  # Using imperial for demonstration (°F)
+            'units': 'imperial'
         }
         response = requests.get(self.base_url, params=params)
         if response.status_code == 200:
             data = response.json()
-            # Extract only the daily forecast's temperature and weather
             forecast = [
                 {
                     'date': datetime.fromtimestamp(day['dt']).strftime('%Y-%m-%d'),
@@ -38,8 +38,6 @@ def scrape_weather_forecast():
     longitude = -104.9903  # Longitude for Denver, Colorado
     scraper = WeatherScraper(api_key)
     forecast_data = scraper.fetch_weather_forecast(latitude, longitude)
-    with open('forecast_data.json', 'w') as f:
-        json.dump(forecast_data, f, indent=4)
     return forecast_data
 
 def connect_to_server(server_ip, port=65433):
@@ -49,8 +47,12 @@ def connect_to_server(server_ip, port=65433):
             print("Connected to server.")
             forecast_data = scrape_weather_forecast()
             serialized_data = json.dumps(forecast_data).encode('utf-8')
-            sock.sendall(serialized_data)
-            print("Weather forecast data sent to server.")
+            compressed_data = zlib.compress(serialized_data)
+            # Send the size of the compressed data first
+            sock.sendall(len(compressed_data).to_bytes(4, 'big'))
+            # Then send the compressed data
+            sock.sendall(compressed_data)
+            print("Compressed weather forecast data sent to server.")
             response = sock.recv(8192)
             print("Received response:", response.decode())
     except socket.error as e:
@@ -59,5 +61,5 @@ def connect_to_server(server_ip, port=65433):
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    SERVER_IP = '10.0.0.224' 
+    SERVER_IP = '10.0.0.224'
     connect_to_server(SERVER_IP)
