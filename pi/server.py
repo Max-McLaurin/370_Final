@@ -1,6 +1,7 @@
 import socket
 import zlib
 import json
+import os
 
 def start_server(host='0.0.0.0', port=65433):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -9,30 +10,31 @@ def start_server(host='0.0.0.0', port=65433):
     server_socket.listen(5)
     print(f"Server listening on {host}:{port}")
 
-    connections = []
-
     try:
         while True:
             client_socket, addr = server_socket.accept()
             print(f"Accepted connection from {addr}")
-            connections.append(client_socket)
-            if len(connections) == 1:
-                # Handle scraper connection
-                data = handle_client_connection(client_socket)
-                print("Data received from scraper and processed.")
-            elif len(connections) == 2:
-                # Handle processor connection
-                send_data_to_processor(client_socket, data)
-                print("Data sent to processor.")
-            else:
-                print("Unexpected connection ignored.")
-            
+            handle_connection(client_socket)
     except KeyboardInterrupt:
         print("Server is shutting down.")
     finally:
         server_socket.close()
 
-def handle_client_connection(client_socket):
+def handle_connection(client_socket):
+    # First, check if it's a data sending or file receiving
+    mode = client_socket.recv(1).decode('utf-8')  # Expect 'D' for data, 'F' for file
+    if mode == 'D':
+        data = handle_client_data(client_socket)
+        print("Data received from client and processed.")
+        if data:
+            # Optionally send data back or notify other systems
+            pass
+    elif mode == 'F':
+        receive_file_from_client(client_socket, 'received_image.png')
+        print("Image received from processor.")
+    client_socket.close()
+
+def handle_client_data(client_socket):
     try:
         # Receive the size of the compressed data first
         data_size = int.from_bytes(client_socket.recv(4), 'big')
@@ -51,18 +53,22 @@ def handle_client_connection(client_socket):
         return data
     except Exception as e:
         print(f"An error occurred (server): {e}")
+        return None
 
-def send_data_to_processor(client_socket, data):
+def receive_file_from_client(client_socket, file_path):
     try:
-        serialized_data = json.dumps(data).encode('utf-8')
-        compressed_data = zlib.compress(serialized_data)
-        # Send the size of the compressed data first
-        client_socket.sendall(len(compressed_data).to_bytes(4, 'big'))
-        # Then send the compressed data
-        client_socket.sendall(compressed_data)
-        print("Compressed data sent to processor.")
+        file_size = int.from_bytes(client_socket.recv(8), 'big')
+        with open(file_path, 'wb') as file:
+            bytes_received = 0
+            while bytes_received < file_size:
+                chunk = client_socket.recv(4096)
+                if not chunk:
+                    break
+                file.write(chunk)
+                bytes_received += len(chunk)
+        print(f"File {file_path} has been received successfully.")
     except Exception as e:
-        print(f"An error occurred when sending to processor: {e}")
+        print(f"An error occurred while receiving the file: {e}")
 
 if __name__ == "__main__":
     start_server()
