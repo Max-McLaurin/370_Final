@@ -14,13 +14,19 @@ def connect_to_server(server_ip, port=65433):
                 packet = sock.recv(4096)
                 if not packet:
                     break
-            compressed_data += packet
+                compressed_data += packet  # Ensure this is inside the loop
+
             # Decompress the data
             decompressed_data = zlib.decompress(compressed_data)
             data = json.loads(decompressed_data.decode('utf-8'))
             print("Received decompressed JSON data:")
             print(json.dumps(data, indent=4))
-            # Implement data processing logic here
+
+            # Save data to a JSON file
+            with open('output.json', 'w') as json_file:
+                json.dump(data, json_file, indent=4)
+            print("Data saved to 'output.json'.")
+
     except socket.error as e:
         print(f"Could not connect to server {server_ip} on port {port}: {e}")
     except Exception as e:
