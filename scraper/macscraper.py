@@ -40,7 +40,7 @@ def scrape_weather_forecast():
     forecast_data = scraper.fetch_weather_forecast(latitude, longitude)
     return forecast_data
 
-def connect_to_server(server_ip, port=65433):
+def connect_to_server(server_ip, port=65434):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((server_ip, port))
