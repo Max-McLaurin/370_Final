@@ -68,7 +68,8 @@ def send_file_to_pi(server_ip, port, file_path):
 
 if __name__ == "__main__":
     SERVER_IP = '10.0.0.224'
+    port = 65434
     connect_to_server(SERVER_IP, 65434)
     FILE_PATH = 'weather_dashboard.png'
-    send_file_to_pi(SERVER_IP, PORT, FILE_PATH)
+    send_file_to_pi(SERVER_IP, port, FILE_PATH)
     print("Sending Fle to Pi")

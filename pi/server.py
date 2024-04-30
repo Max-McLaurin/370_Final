@@ -66,21 +66,19 @@ def send_data_to_processor(client_socket, data):
     except Exception as e:
         print(f"An error occurred when sending to processor: {e}")
 
-def receive_file_from_client(client_socket, file_path):
-    print("In recieve file from client")
-    try:
-        file_size = int.from_bytes(client_socket.recv(8), 'big')
-        with open(file_path, 'wb') as file:
-            bytes_received = 0
-            while bytes_received < file_size:
-                chunk = client_socket.recv(4096)
-                if not chunk:
-                    break
-                file.write(chunk)
-                bytes_received += len(chunk)
-        print(f"File {file_path} has been received and saved.")
-    except Exception as e:
-        print(f"An error occurred while receiving the file: {e}")
+def receive_file_from_client(client_socket):
+    file_size = int.from_bytes(client_socket.recv(8), 'big')
+    file_path = generate_file_path()
+    with open(file_path, 'wb') as file:
+        bytes_received = 0
+        while bytes_received < file_size:
+            chunk = client_socket.recv(4096)
+            if not chunk:
+                break
+            file.write(chunk)
+            bytes_received += len(chunk)
+        if bytes_received != file_size:
+            print("Warning: Mismatch in file size received and expected.")
 
 if __name__ == "__main__":
     start_server()
