@@ -71,3 +71,4 @@ if __name__ == "__main__":
     connect_to_server(SERVER_IP, 65434)
     FILE_PATH = 'weather_dashboard.png'
     send_file_to_pi(SERVER_IP, PORT, FILE_PATH)
+    print("Sending Fle to Pi")

@@ -2,7 +2,7 @@ import socket
 import zlib
 import json
 
-def start_server(host='0.0.0.0', port=65433):
+def start_server(host='0.0.0.0', port=65434):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((host, port))
@@ -24,6 +24,8 @@ def start_server(host='0.0.0.0', port=65433):
                 # Handle processor connection
                 send_data_to_processor(client_socket, data)
                 print("Data sent to processor.")
+                time.sleep(45)
+                receive_file_from_client(65434, FILE_PATH)
             else:
                 print("Unexpected connection ignored.")
             
@@ -64,5 +66,22 @@ def send_data_to_processor(client_socket, data):
     except Exception as e:
         print(f"An error occurred when sending to processor: {e}")
 
+def receive_file_from_client(client_socket, file_path):
+    print("In recieve file from client")
+    try:
+        file_size = int.from_bytes(client_socket.recv(8), 'big')
+        with open(file_path, 'wb') as file:
+            bytes_received = 0
+            while bytes_received < file_size:
+                chunk = client_socket.recv(4096)
+                if not chunk:
+                    break
+                file.write(chunk)
+                bytes_received += len(chunk)
+        print(f"File {file_path} has been received and saved.")
+    except Exception as e:
+        print(f"An error occurred while receiving the file: {e}")
+
 if __name__ == "__main__":
     start_server()
+    FILE_PATH = 'weather_dashboard.png'
