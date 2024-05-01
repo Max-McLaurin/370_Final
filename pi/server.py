@@ -40,6 +40,7 @@ def handle_client_connection(client_socket):
         # Receive the size of the compressed data first
         data_size = int.from_bytes(client_socket.recv(4), 'big')
         compressed_data = b''
+        print("Data recieved: ", data_size)
         while len(compressed_data) < data_size:
             packet = client_socket.recv(4096)
             if not packet:

@@ -13,6 +13,7 @@ def connect_to_server(server_ip, port=65434):
             print("Connected to server.")
             # Receive the size of the compressed data first
             data_size = int.from_bytes(sock.recv(4), 'big')
+            print("Size of data_size: ", data_size)
             compressed_data = b''
             while len(compressed_data) < data_size:
                 packet = sock.recv(4096)
