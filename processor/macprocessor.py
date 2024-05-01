@@ -24,28 +24,28 @@ class ServerConnection:
             self.sock.close()
             print("Disconnected from server.")
 
-    def send_file(self, file_path):
-        """Send a compressed file using the existing connection."""
-        try:
-            with open(file_path, 'rb') as file:
-                file_data = file.read()  # Read the entire file into memory
+    # def send_file(self, file_path):
+    #     """Send a compressed file using the existing connection."""
+    #     try:
+    #         with open(file_path, 'rb') as file:
+    #             file_data = file.read()  # Read the entire file into memory
 
-            # Compress the data using Brotli
-            compressed_data = brotli.compress(file_data)
-            compressed_size = len(compressed_data)
-            print(f"Original size: {os.path.getsize(file_path)} bytes; Compressed size: {compressed_size} bytes")
+    #         # Compress the data using Brotli
+    #         compressed_data = brotli.compress(file_data)
+    #         compressed_size = len(compressed_data)
+    #         print(f"Original size: {os.path.getsize(file_path)} bytes; Compressed size: {compressed_size} bytes")
 
-            # Send the size of the compressed file to the server
-            self.sock.sendall(compressed_size.to_bytes(8, 'big'))
+    #         # Send the size of the compressed file to the server
+    #         self.sock.sendall(compressed_size.to_bytes(8, 'big'))
 
-            # Send the compressed file data
-            self.sock.sendall(compressed_data)
-            print(f"Compressed file {file_path} has been sent successfully.")
+    #         # Send the compressed file data
+    #         self.sock.sendall(compressed_data)
+    #         print(f"Compressed file {file_path} has been sent successfully.")
             
-        except socket.error as e:
-            print(f"Socket error during file send: {e}")
-        except Exception as e:
-            print(f"Error during file send: {e}")
+        # except socket.error as e:
+        #     print(f"Socket error during file send: {e}")
+        # except Exception as e:
+        #     print(f"Error during file send: {e}")
 
     def receive_and_process_data(self):
         """Receive compressed data, decompress, save and call a subprocess."""
@@ -78,14 +78,13 @@ class ServerConnection:
             print("Calling twitter.py to upload weather")
             subprocess.call(['python3', 'twitter.py'])
             
-
         except socket.error as e:
             print(f"Socket error during data receive: {e}")
         except Exception as e:
             print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    SERVER_IP = '10.0.0.224'
+    SERVER_IP = '10.84.177.121'
     PORT = 65434
     FILE_PATH = 'weather_dashboard.png'
     

@@ -63,5 +63,5 @@ def connect_to_server(server_ip, port=65434):
         print(f"An error occurred: {e}")
 
 if __name__ == "__main__":
-    SERVER_IP = '10.0.0.224'
+    SERVER_IP = '10.84.177.121'
     connect_to_server(SERVER_IP)

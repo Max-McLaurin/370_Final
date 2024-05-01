@@ -30,7 +30,7 @@ def create_weather_image(weather_data, filename, icon_folder):
         img.paste(icon, (20, y_position + (height - 64) // 2), icon)
 
         text_position = (20 + 64 + 10, y_position + 20)
-        # Removed `entry["weather"]["main"]` from the string formatting
+        
         weather_text = f"{entry['date']}: {entry['temperature']['day']}°F " \
                        f"(Min: {entry['temperature']['min']}°F, Max: {entry['temperature']['max']}°F)"
         draw.text(text_position, weather_text, font=font, fill="black")
