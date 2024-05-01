@@ -18,6 +18,8 @@ def get_icon_path(weather_main):
     return icons.get(weather_main, "default.png")
 
 def create_weather_image(weather_data, filename, icon_folder):
+
+    #comment
     width, height = 800, 100
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 18)
     img = Image.new('RGB', (width, height * len(weather_data)), color='white')

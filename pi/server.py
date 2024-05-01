@@ -46,6 +46,8 @@ def handle_client_connection(client_socket):
             if not packet:
                 break
             compressed_data += packet
+
+            # comment
         
         # Decompress the data
         decompressed_data = zlib.decompress(compressed_data)

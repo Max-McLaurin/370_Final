@@ -47,6 +47,8 @@ def send_file_to_pi(server_ip, port, file_path):
             sock.connect((server_ip, port))
             print(f"Connected to Pi server at {server_ip} on port {port}.")
 
+            #comment
+
             # Get the size of the file
             file_size = os.path.getsize(file_path)
             # Send the size of the file to the server

@@ -18,6 +18,8 @@ class WeatherScraper:
             'units': 'imperial'
         }
         response = requests.get(self.base_url, params=params)
+
+        #comment
         if response.status_code == 200:
             data = response.json()
             forecast = [
