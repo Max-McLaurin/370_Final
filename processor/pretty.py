@@ -8,7 +8,7 @@ def load_weather_data(file_path):
 
 def get_icon_path(weather_main):
     icons = {
-        "Rain": "Rainy.png",
+        "Rain": "Partly_Sunny.png",
         "Wind": "Windy.png",
         "Clouds": "Cloudy.png",
         "Clear": "Sunny.png",
@@ -18,8 +18,6 @@ def get_icon_path(weather_main):
     return icons.get(weather_main, "default.png")
 
 def create_weather_image(weather_data, filename, icon_folder):
-
-    #comment
     width, height = 800, 100
     font = ImageFont.truetype("/Library/Fonts/Arial.ttf", 18)
     img = Image.new('RGB', (width, height * len(weather_data)), color='white')
@@ -32,7 +30,8 @@ def create_weather_image(weather_data, filename, icon_folder):
         img.paste(icon, (20, y_position + (height - 64) // 2), icon)
 
         text_position = (20 + 64 + 10, y_position + 20)
-        weather_text = f"{entry['date']}: {entry['weather']['main']}, {entry['temperature']['day']}°F " \
+        # Removed `entry["weather"]["main"]` from the string formatting
+        weather_text = f"{entry['date']}: {entry['temperature']['day']}°F " \
                        f"(Min: {entry['temperature']['min']}°F, Max: {entry['temperature']['max']}°F)"
         draw.text(text_position, weather_text, font=font, fill="black")
 

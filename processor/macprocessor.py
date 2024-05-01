@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 import json
-import brotli  # Import the brotli module
+import brotli  
 import zlib
 
 class ServerConnection:
