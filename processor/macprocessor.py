@@ -13,6 +13,7 @@ def connect_to_server(server_ip, port=65434):
             print("Connected to server.")
             # Receive the size of the compressed data first
             data_size = int.from_bytes(sock.recv(4), 'big')
+            print("Size of data_size: ", data_size)
             compressed_data = b''
             while len(compressed_data) < data_size:
                 packet = sock.recv(4096)
@@ -58,8 +59,9 @@ def send_file_to_pi(server_ip, port, file_path):
                     chunk = file.read(4096)
                     sock.sendall(chunk)
                     bytes_sent += len(chunk)
-
+            print("Size of bytes_sent: ", bytes_sent)
             print(f"File {file_path} has been sent successfully.")
+            time.sleep(5)
 
     except socket.error as e:
         print(f"Could not connect to Pi server {server_ip} on port {port}: {e}")
