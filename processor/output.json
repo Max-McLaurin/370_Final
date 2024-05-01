@@ -1,0 +1,138 @@
+[
+    {
+        "date": "2024-04-29",
+        "temperature": {
+            "day": 62.13,
+            "min": 46.42,
+            "max": 67.78,
+            "night": 56.64,
+            "eve": 62.65,
+            "morn": 46.42
+        },
+        "weather": {
+            "id": 804,
+            "main": "Clouds",
+            "description": "overcast clouds",
+            "icon": "04d"
+        }
+    },
+    {
+        "date": "2024-04-30",
+        "temperature": {
+            "day": 66.6,
+            "min": 50.04,
+            "max": 72.86,
+            "night": 57.79,
+            "eve": 72.36,
+            "morn": 50.04
+        },
+        "weather": {
+            "id": 500,
+            "main": "Rain",
+            "description": "light rain",
+            "icon": "10d"
+        }
+    },
+    {
+        "date": "2024-05-01",
+        "temperature": {
+            "day": 65.28,
+            "min": 50.02,
+            "max": 68.94,
+            "night": 50.7,
+            "eve": 57.74,
+            "morn": 50.47
+        },
+        "weather": {
+            "id": 500,
+            "main": "Rain",
+            "description": "light rain",
+            "icon": "10d"
+        }
+    },
+    {
+        "date": "2024-05-02",
+        "temperature": {
+            "day": 57.9,
+            "min": 44.62,
+            "max": 65.48,
+            "night": 56.64,
+            "eve": 63.99,
+            "morn": 44.62
+        },
+        "weather": {
+            "id": 500,
+            "main": "Rain",
+            "description": "light rain",
+            "icon": "10d"
+        }
+    },
+    {
+        "date": "2024-05-03",
+        "temperature": {
+            "day": 70.7,
+            "min": 47.91,
+            "max": 70.88,
+            "night": 52.83,
+            "eve": 70.88,
+            "morn": 47.91
+        },
+        "weather": {
+            "id": 803,
+            "main": "Clouds",
+            "description": "broken clouds",
+            "icon": "04d"
+        }
+    },
+    {
+        "date": "2024-05-04",
+        "temperature": {
+            "day": 61.21,
+            "min": 43.05,
+            "max": 70.54,
+            "night": 62.78,
+            "eve": 69.6,
+            "morn": 43.05
+        },
+        "weather": {
+            "id": 802,
+            "main": "Clouds",
+            "description": "scattered clouds",
+            "icon": "03d"
+        }
+    },
+    {
+        "date": "2024-05-05",
+        "temperature": {
+            "day": 74.8,
+            "min": 53.46,
+            "max": 81.72,
+            "night": 72.03,
+            "eve": 78.21,
+            "morn": 53.46
+        },
+        "weather": {
+            "id": 803,
+            "main": "Clouds",
+            "description": "broken clouds",
+            "icon": "04d"
+        }
+    },
+    {
+        "date": "2024-05-06",
+        "temperature": {
+            "day": 80.24,
+            "min": 58.84,
+            "max": 84.63,
+            "night": 65.55,
+            "eve": 78.94,
+            "morn": 58.84
+        },
+        "weather": {
+            "id": 800,
+            "main": "Clear",
+            "description": "clear sky",
+            "icon": "01d"
+        }
+    }
+]
