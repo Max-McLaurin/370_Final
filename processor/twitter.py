@@ -36,5 +36,5 @@ def tweet_text_and_media(text, media):
     print(f"\n\tTwitter Bot: Successfully Tweeted!\n\n{text}\n\nMedia ID:  {media_id}\n\n")
 
 
-tweet_text_and_media("Daily Weather: ", "weather_dashboard.png")
+tweet_text_and_media("Daily Weather In Fort Collins, CO: ", "weather_dashboard.png")
 
