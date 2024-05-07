@@ -71,32 +71,28 @@ def send_data_to_processor(client_socket, data):
         print(f"An error occurred when sending to processor: {e}")
 
 def receive_file_from_client(client_socket, file_path):
-    file_size = int.from_bytes(client_socket.recv(4), 'big')
-    print("file_size Recieved: ", file_size)
-    with open(file_size, 'wb') as file:
-        print("A")
-        bytes_received = 0
-        
-        while bytes_received < file_size:
-            print("B")
+    try:
+        file_size = int.from_bytes(client_socket.recv(4), 'big')
+        print("Expected file size to receive:", file_size)
+        received_data = b''
+
+        while len(received_data) < file_size:
             chunk = client_socket.recv(4096)
             if not chunk:
-                break
-            file.write(chunk)
-            bytes_received += len(chunk)
-        if bytes_received != file_size:
+                break  # This happens when the connection is closed
+            received_data += chunk
+            print(f"Received {len(received_data)} of {file_size} bytes")
+
+        # Write the data to file only after full reception
+        if len(received_data) == file_size:
+            with open(file_path, 'wb') as file:
+                file.write(received_data)
+            print(f"File {file_path} has been written successfully.")
+        else:
             print("Warning: Mismatch in file size received and expected.")
-    '''compressed_data = b''
-    while len(compressed_data) < file_size:
-        packet = client_socket.recv(4096)
-        if not packet:
-            break
-        compressed_data += packet
-        
-        # Decompress the data
-    decompressed_data = zlib.decompress(compressed_data)
-    with open(file_path, 'wb') as file:
-        file.write(decompressed_data)'''
+    except Exception as e:
+        print(f"An error occurred while receiving the file: {e}")
+
 
 if __name__ == "__main__":
     #file_path = 'weather_dashboard.png'

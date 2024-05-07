@@ -36,8 +36,8 @@ class WeatherScraper:
 
 def scrape_weather_forecast():
     api_key = '1ca0f59fe93a61361be975d8d29c21c7'
-    latitude = 39.7392  # Latitude for Denver, Colorado
-    longitude = -104.9903  # Longitude for Denver, Colorado
+    latitude = 40.5853  # Latitude for Fort Collins, Colorado
+    longitude = -105.0844  # Longitude for Fort Collins, Colorado
     scraper = WeatherScraper(api_key)
     forecast_data = scraper.fetch_weather_forecast(latitude, longitude)
     return forecast_data
